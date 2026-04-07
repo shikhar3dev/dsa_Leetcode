@@ -1,0 +1,55 @@
+class Robot {
+    private int width, height;
+    private int x, y, dir;
+    private int loop;
+    private long totalSteps; // track total steps taken
+    private String[] dirs = {"East", "North", "West", "South"};
+
+    public Robot(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.x = 0;
+        this.y = 0;
+        this.dir = 0; // East
+        this.loop = 2 * (width + height - 2);
+        this.totalSteps = 0;
+    }
+
+    public void step(int num) {
+        totalSteps += num;
+        num %= loop;
+        while (num > 0) {
+            int move = 0;
+            if (dir == 0) { // East
+                move = Math.min(num, width - 1 - x);
+                x += move;
+            } else if (dir == 1) { // North
+                move = Math.min(num, height - 1 - y);
+                y += move;
+            } else if (dir == 2) { // West
+                move = Math.min(num, x);
+                x -= move;
+            } else { // South
+                move = Math.min(num, y);
+                y -= move;
+            }
+            num -= move;
+            if (num > 0) { // hit boundary, turn CCW
+                dir = (dir + 1) % 4;
+            }
+        }
+
+        // Special case: if robot is at (0,0) after full loops
+        if (x == 0 && y == 0 && totalSteps % loop == 0) {
+            dir = 3; // South
+        }
+    }
+
+    public int[] getPos() {
+        return new int[]{x, y};
+    }
+
+    public String getDir() {
+        return dirs[dir];
+    }
+}
